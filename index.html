@@ -1,5 +1,29 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Animal Health Screening</title><link rel="stylesheet" href="styles.css"></head><body>
-<nav id="nav"><b>Animal Health Screening</b><a href="#/">Screen</a><a href="#/dashboard">Dashboard</a><a href="#/history">History</a><a href="#/about">Model &amp; privacy</a></nav>
-<main id="app"></main><footer>Screening aid only. Not a veterinary diagnosis. Runs entirely in your browser.</footer>
-<script type="module" src="app.js"></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Animal Health Screening</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <nav id="nav">
+    <b>Animal Health Screening</b>
+    <a href="#/">Screen</a>
+    <a href="#/dashboard">Dashboard</a>
+    <a href="#/history">History</a>
+    <a href="#/about">Model &amp; privacy</a>
+  </nav>
+
+  <main id="app"></main>
+
+  <footer>
+    Screening aid only. Not a veterinary diagnosis.
+    Runs entirely in your browser.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
