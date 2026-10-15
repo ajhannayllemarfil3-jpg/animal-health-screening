@@ -1,0 +1,22 @@
+import test from "node:test"; import assert from "node:assert/strict";
+import * as L from "../js/logic.js";
+const card = { name: "t", source: "s", license: "l", format: "graph", trainingData: "d", input: { size: 224, scale: "0-1" }, outputs: "probabilities", species: ["Cattle"], labels: ["a", "b", "c"] };
+test("valid file passes", () => assert.equal(L.validateFile({ type: "image/png", size: 100 }), null));
+test("rejects pdf", () => assert.match(L.validateFile({ type: "application/pdf", size: 5 }), /Unsupported/));
+test("rejects empty", () => assert.match(L.validateFile({ type: "image/png", size: 0 }), /empty/));
+test("rejects oversized", () => assert.match(L.validateFile({ type: "image/png", size: 9e6 }), /8 MB/));
+test("scale params", () => { assert.equal(L.scaleParams("0-1").mul, 1 / 255); assert.equal(L.scaleParams("-1-1").add, -1); });
+test("card validation flags missing fields", () => { assert.ok(L.validateCard({}).length > 3); assert.deepEqual(L.validateCard(card), []); });
+test("no model -> unavailable, no prediction", () => assert.equal(L.decide({ card: null, species: "Cattle" }).status, "unavailable"));
+test("incomplete card -> unavailable", () => assert.equal(L.decide({ card: { name: "x" }, species: "Cattle" }).status, "unavailable"));
+test("unsupported species", () => assert.equal(L.decide({ card, species: "Dog", rawOutput: [1, 0, 0] }).status, "unsupported_species"));
+test("high confidence -> prediction", () => assert.equal(L.decide({ card, species: "cattle", rawOutput: [0.9, 0.05, 0.05] }).status, "prediction"));
+test("low confidence -> inconclusive", () => assert.equal(L.decide({ card, species: "Cattle", rawOutput: [0.4, 0.35, 0.25] }).status, "inconclusive"));
+test("logits softmax sums to 1", () => assert.ok(Math.abs(L.softmax([2, 1, 0]).reduce((a, b) => a + b) - 1) < 1e-9));
+test("quality warnings", () => assert.equal(L.qualityCheck({ width: 100, height: 100, meanLum: 10, stdLum: 3 }).length, 3));
+test("emergency detection", () => { assert.ok(L.isEmergency(["Seizures"])); assert.ok(!L.isEmergency(["Vomiting"])); });
+test("clip prompts built per species", () => { const p = L.clipPrompts("Goat"); assert.equal(p.prompts.length, L.SIGNS.length); assert.ok(p.prompts[1].startsWith("a photo of a goat ")); });
+test("clip low score -> inconclusive, baseline flagged", () => {
+  const { prefix } = L.clipPrompts("Dog"), d = L.clipDecide([{ label: prefix + L.BASELINE, score: 0.3 }, { label: prefix + L.SIGNS[1], score: 0.25 }], prefix);
+  assert.equal(d.status, "clip_inconclusive"); assert.equal(d.baseline, true);
+});

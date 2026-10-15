@@ -1,0 +1,13 @@
+{
+  "_README": "Copy to model-card.json ONLY after you have placed a real converted model (model.json + shards) here and filled EVERY field from the model's real documentation. Do not guess any value.",
+  "name": "FILL: exact model name",
+  "source": "FILL: URL of the model's page",
+  "license": "FILL: license stated by the author (if none is stated, you may not have the right to redistribute it)",
+  "trainingData": "FILL: dataset description and size, from the author",
+  "format": "graph",
+  "input": { "size": 224, "scale": "0-1" },
+  "outputs": "probabilities",
+  "species": ["FILL: species the training data covers"],
+  "labels": ["FILL: class names in the exact output order"],
+  "minConfidence": 0.7
+}
